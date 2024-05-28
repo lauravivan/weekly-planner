@@ -1,0 +1,14 @@
+.header {
+  width: 100%;
+
+  &__title {
+    font-size: calc($fs-medium + 0.6rem);
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  &__subtitle {
+    font-family: $dancing-script;
+    font-size: $fs-medium;
+  }
+}

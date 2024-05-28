@@ -1,0 +1,17 @@
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: $black;
+}
+
+body {
+  margin: 0;
+  font-family: $montserrat;
+  color: #000;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  row-gap: 3rem;
+  padding: 50px;
+}

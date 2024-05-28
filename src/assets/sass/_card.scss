@@ -1,0 +1,15 @@
+.card {
+  &__header {
+    background-color: $light-brown;
+    text-align: center;
+    padding: 5px 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  &__content {
+    height: 300px;
+    background-color: $white-2;
+    overflow-y: auto;
+  }
+}

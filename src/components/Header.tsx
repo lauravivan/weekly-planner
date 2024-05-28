@@ -5,9 +5,9 @@ type HeaderProps = {
 
 export function Header({ title, subtitle }: HeaderProps) {
   return (
-    <header>
-      <div>{title}</div>
-      <div>{subtitle}</div>
+    <header className="header">
+      <div className="header__title">{title}</div>
+      <div className="header__subtitle">{subtitle}</div>
     </header>
   );
 }
