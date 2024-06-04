@@ -1,6 +1,14 @@
 .cards {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
   gap: 30px;
+
+  @media (max-width: $screen-md) {
+    grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
+  }
+
+  @media (max-width: $screen-sm) {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  }
 }
