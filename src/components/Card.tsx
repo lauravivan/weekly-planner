@@ -9,9 +9,12 @@ export function Card({ dayOfTheWeek }: CardProps) {
   const [tasks, setTasks] = useState(() => getTasksByIndex(dayOfTheWeek));
   const [isOnEditMode, setIsOnEditMode] = useState(true);
 
-  const handleInputEnter = (index: number, e: object) => {
+  const handleInputEnter = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     const keyboardKey: string = e.key;
-    const userText: string = e.target.value;
+    const userText: string = (e.target as HTMLInputElement).value;
 
     if (keyboardKey == "Enter") {
       updateTask(dayOfTheWeek, index, userText);
