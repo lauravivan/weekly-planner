@@ -1,1 +1,1 @@
-export const DEFAULT_TASK_TEXT = "Study hardware lessons";
+export const DEFAULT_TASK_TEXT = "To do...";
