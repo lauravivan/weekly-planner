@@ -4,7 +4,7 @@ export function addTask(dayOfTheWeek: string) {
   const tasks: Array<string[]> = getTasks();
   const indexTasks: number = getDayOfTheWeek(dayOfTheWeek) - 1;
 
-  tasks[indexTasks].push(DEFAULT_TASK_TEXT);
+  tasks[indexTasks].push("");
 
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
@@ -38,4 +38,18 @@ export function updateTask(
   tasks[indexTasks][index] = newValue;
 
   localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+export function deleteTask(dayOfTheWeek: string, indexToRemove: number) {
+  // const tasks: Array<string[]> = getTasks();
+  // const indexTasks: number = getDayOfTheWeek(dayOfTheWeek) - 1;
+  // if (tasks.length === 1) {
+  //   tasks[indexTasks].splice(0, 1);
+  //   tasks[indexTasks].push(DEFAULT_TASK_TEXT);
+  // } else {
+  //   if (tasks[indexTasks][indexToRemove]) {
+  //     tasks[indexTasks].splice(indexToRemove, 1);
+  //   }
+  // }
+  // localStorage.setItem("tasks", JSON.stringify(tasks));
 }
