@@ -1,25 +1,26 @@
-import { useState, useRef, RefObject, useEffect } from "react";
+import {
+  useState,
+  useRef,
+  RefObject,
+  useEffect,
+  SetStateAction,
+  Dispatch,
+} from "react";
 import {
   DEFAULT_TASK_TEXT,
-  addTask,
-  updateTask,
-  deleteTask,
   getDailyTasks,
+  getDayOfTheWeek,
+  getWeekTasks,
 } from "../util";
 
 type InputType = {
   text: string;
   index: number;
   dayOfTheWeek: string;
-  updateDailyTasks: () => void;
+  setWeekTasks: Dispatch<SetStateAction<string[][]>>;
 };
 
-export function Input({
-  text,
-  index,
-  dayOfTheWeek,
-  updateDailyTasks,
-}: InputType) {
+export function Input({ text, index, dayOfTheWeek, setWeekTasks }: InputType) {
   const [readOnly, setReadOnly] = useState(true);
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
   const inputText = text || DEFAULT_TASK_TEXT;
@@ -28,7 +29,7 @@ export function Input({
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
+  });
 
   const handleInputEnter = (
     index: number,
@@ -42,14 +43,12 @@ export function Input({
 
       if (keyboardKey == "Enter" && userText) {
         if (!taskHasSibbling(index + 1)) {
-          addTask(dayOfTheWeek);
+          addTask();
         }
 
         setReadOnly(true);
         insertReadOnly(true);
       }
-
-      updateDailyTasks();
     }, 250);
   };
 
@@ -70,11 +69,6 @@ export function Input({
     insertReadOnly(true);
   };
 
-  const handleTaskDelete = (index: number) => {
-    deleteTask(dayOfTheWeek, index);
-    updateDailyTasks();
-  };
-
   const insertPlaceholder = (text: string) => {
     if (inputRef && inputRef.current) {
       inputRef.current.placeholder = text;
@@ -92,6 +86,42 @@ export function Input({
     const sibbling = dailyTasks[sibblingIndex];
 
     return sibbling ? true : false;
+  };
+
+  const updateTask = (
+    dayOfTheWeek: string,
+    index: number,
+    newValue: string
+  ) => {
+    const weekTasks: string[][] = [...getWeekTasks()];
+
+    weekTasks[getDayOfTheWeek(dayOfTheWeek)][index] = newValue;
+
+    setWeekTasks(weekTasks);
+  };
+
+  const addTask = (text?: string) => {
+    const weekTasks: string[][] = [...getWeekTasks()];
+    const taskText: string = text || "";
+
+    weekTasks[getDayOfTheWeek(dayOfTheWeek)].push(taskText);
+
+    setWeekTasks(weekTasks);
+  };
+
+  const deleteTask = (dayOfTheWeek: string, indexToRemove: number) => {
+    const weekTasks: string[][] = [...getWeekTasks()];
+    const dailyTasksLength: number = getDailyTasks(dayOfTheWeek).length;
+
+    if (indexToRemove >= 0 && indexToRemove < dailyTasksLength) {
+      weekTasks[getDayOfTheWeek(dayOfTheWeek)].splice(indexToRemove, 1);
+    }
+
+    if (weekTasks[getDayOfTheWeek(dayOfTheWeek)].length === 0) {
+      addTask(DEFAULT_TASK_TEXT);
+    }
+
+    setWeekTasks(weekTasks);
   };
 
   return (
@@ -118,7 +148,7 @@ export function Input({
       />
       <div
         className="card__input--delete"
-        onClick={handleTaskDelete.bind(self, index)}
+        onClick={deleteTask.bind(self, dayOfTheWeek, index)}
         key={`delete-${index}`}
       />
     </div>
