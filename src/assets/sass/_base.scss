@@ -18,4 +18,8 @@ body {
   flex-direction: column;
   row-gap: 3rem;
   padding: 50px;
+
+  @media (max-width: $screen-sm) {
+    padding: 40px 15px 60px;
+  }
 }
