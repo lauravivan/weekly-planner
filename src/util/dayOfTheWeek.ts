@@ -3,19 +3,19 @@ export function getDayOfTheWeek(dayOfTheWeek: string): number {
 
   switch (cleaned) {
     case "monday":
-      return 1;
+      return 0;
     case "tuesday":
-      return 2;
+      return 1;
     case "wednesday":
-      return 3;
+      return 2;
     case "thursday":
-      return 4;
+      return 3;
     case "friday":
-      return 5;
+      return 4;
     case "saturday":
-      return 6;
+      return 5;
     case "sunday":
-      return 7;
+      return 6;
     default:
       return -1;
   }
