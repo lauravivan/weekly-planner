@@ -1,30 +1,31 @@
-import { getDayOfTheWeek, DEFAULT_TASK_TEXT } from "./index";
+import { DEFAULT_TASK_TEXT, getDayOfTheWeek } from "../util";
 
-export function addTask(dayOfTheWeek: string) {
-  const tasks: Array<string[]> = getTasks();
-  const indexTasks: number = getDayOfTheWeek(dayOfTheWeek) - 1;
+export function addTask(dayOfTheWeek: string, text?: string) {
+  const weekTasks: Array<string[]> = getWeekTasks();
+  const weekIndex: number = getDayOfTheWeek(dayOfTheWeek);
+  const taskText = text || "";
 
-  tasks[indexTasks].push("");
+  weekTasks[weekIndex].push(taskText);
 
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("tasks", JSON.stringify(weekTasks));
 }
 
-export function getTasks(): Array<string[]> {
-  const tasks: Array<string[]> =
+export function getWeekTasks(): Array<string[]> {
+  const weekTasks: Array<string[]> =
     JSON.parse(localStorage.getItem("tasks")!) ||
     Array.from({ length: 7 }, () => [DEFAULT_TASK_TEXT]);
 
-  return tasks;
+  return weekTasks;
 }
 
-export function getTasksByIndex(dayOfTheWeek: string): Array<string> {
-  const tasks: Array<string[]> = getTasks();
+export function getDailyTasks(dayOfTheWeek: string): Array<string> {
+  const weekTasks: Array<string[]> = getWeekTasks();
 
-  const index: number = getDayOfTheWeek(dayOfTheWeek) - 1;
+  const weekIndex: number = getDayOfTheWeek(dayOfTheWeek);
 
-  const tasksOfTheDay: Array<string> = tasks[index];
+  const dailyTasks: Array<string> = weekTasks[weekIndex];
 
-  return tasksOfTheDay;
+  return dailyTasks;
 }
 
 export function updateTask(
@@ -32,24 +33,25 @@ export function updateTask(
   index: number,
   newValue: string
 ) {
-  const tasks: Array<string[]> = getTasks();
-  const indexTasks: number = getDayOfTheWeek(dayOfTheWeek) - 1;
+  const weekTasks: Array<string[]> = getWeekTasks();
+  const weekIndex: number = getDayOfTheWeek(dayOfTheWeek);
 
-  tasks[indexTasks][index] = newValue;
+  weekTasks[weekIndex][index] = newValue;
 
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("tasks", JSON.stringify(weekTasks));
 }
 
 export function deleteTask(dayOfTheWeek: string, indexToRemove: number) {
-  // const tasks: Array<string[]> = getTasks();
-  // const indexTasks: number = getDayOfTheWeek(dayOfTheWeek) - 1;
-  // if (tasks.length === 1) {
-  //   tasks[indexTasks].splice(0, 1);
-  //   tasks[indexTasks].push(DEFAULT_TASK_TEXT);
-  // } else {
-  //   if (tasks[indexTasks][indexToRemove]) {
-  //     tasks[indexTasks].splice(indexToRemove, 1);
-  //   }
-  // }
-  // localStorage.setItem("tasks", JSON.stringify(tasks));
+  const weekTasks: Array<string[]> = getWeekTasks();
+  const weekIndex: number = getDayOfTheWeek(dayOfTheWeek);
+
+  if (indexToRemove >= 0 && indexToRemove < weekTasks[weekIndex].length) {
+    weekTasks[weekIndex].splice(indexToRemove, 1);
+  }
+
+  localStorage.setItem("tasks", JSON.stringify(weekTasks));
+
+  if (weekTasks[weekIndex].length === 0) {
+    addTask(dayOfTheWeek, DEFAULT_TASK_TEXT);
+  }
 }
