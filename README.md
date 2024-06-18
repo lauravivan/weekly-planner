@@ -6,14 +6,19 @@ As I needed a fast way to plan things to do during the week, without being tied 
 
 ![image](https://github.com/lauravivan/weekly-planner/assets/64754203/7ff57906-08dc-4754-817d-cd270da988df)
 
-### TOOLS
+## TOOLS
+
 ![Sass Badge](https://img.shields.io/badge/Sass-C69?logo=sass&logoColor=fff&style=for-the-badge)
 ![TypeScript Badge](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff&style=for-the-badge)
 ![React Badge](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=000&style=for-the-badge)
 ![Vite Badge](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=fff&style=for-the-badge)
 ![ESLint Badge](https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=fff&style=for-the-badge)
 
-### PROJECT SETUP
+## FUTURE FEATURES
+
+- Spread daily repetitive tasks
+
+## PROJECT SETUP
 
 ```sh
 npm install
@@ -30,3 +35,7 @@ npm run dev
 ```sh
 npm run build
 ```
+
+## FIGMA
+
+You can access here the pre-design made with figma: [weeklyplanner](https://www.figma.com/design/HahHBAEBPK2Birwg5pTmuA/weekly-planner?node-id=2-2&t=yX1Pnt6VR3Vz1whg-1)
