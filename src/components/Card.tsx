@@ -1,5 +1,5 @@
 import { Input } from "./index";
-import { getDayOfTheWeek, getWeekTasks } from "../util";
+import { getDailyTasks, getDayOfTheWeek, getWeekTasks } from "../util";
 import { useState, useEffect } from "react";
 
 type CardProps = {
@@ -7,28 +7,29 @@ type CardProps = {
 };
 
 export function Card({ dayOfTheWeek }: CardProps) {
-  const [weekTasks, setWeekTasks] = useState(getWeekTasks());
+  const [dailyTasks, setDailyTasks] = useState(getDailyTasks(dayOfTheWeek));
 
   useEffect(() => {
+    const weekTasks = [...getWeekTasks()];
+    weekTasks[getDayOfTheWeek(dayOfTheWeek)] = dailyTasks;
+
     localStorage.setItem("tasks", JSON.stringify(weekTasks));
-  }, [weekTasks]);
+  }, [dailyTasks, dayOfTheWeek]);
 
   return (
     <div className="card">
       <div className="card__header">{dayOfTheWeek}</div>
       <div className="card__content">
         <form className="card__form" onSubmit={(e) => e.preventDefault()}>
-          {weekTasks[getDayOfTheWeek(dayOfTheWeek)].map(
-            (text: string, index: number) => (
-              <Input
-                text={text}
-                index={index}
-                dayOfTheWeek={dayOfTheWeek}
-                setWeekTasks={setWeekTasks}
-                key={index}
-              />
-            )
-          )}
+          {dailyTasks.map((text: string, index: number) => (
+            <Input
+              text={text}
+              index={index}
+              dayOfTheWeek={dayOfTheWeek}
+              setDailyTasks={setDailyTasks}
+              key={index}
+            />
+          ))}
         </form>
       </div>
     </div>

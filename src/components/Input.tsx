@@ -6,40 +6,36 @@ import {
   SetStateAction,
   Dispatch,
 } from "react";
-import {
-  DEFAULT_TASK_TEXT,
-  getDailyTasks,
-  getDayOfTheWeek,
-  getWeekTasks,
-} from "../util";
+import { DEFAULT_TASK_TEXT, getDailyTasks } from "../util";
 
 type InputType = {
   text: string;
   index: number;
   dayOfTheWeek: string;
-  setWeekTasks: Dispatch<SetStateAction<string[][]>>;
+  setDailyTasks: Dispatch<SetStateAction<string[]>>;
 };
 
-export function Input({ text, index, dayOfTheWeek, setWeekTasks }: InputType) {
+export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
   const [readOnly, setReadOnly] = useState(true);
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
-  const inputText = text || DEFAULT_TASK_TEXT;
 
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
     }
-  });
+  }, []);
 
   const handleInputEnter = (
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
+    e.stopPropagation();
+
     setTimeout(() => {
       const keyboardKey: string = e.key;
       const userText: string = (e.target as HTMLInputElement).value;
 
-      updateTask(dayOfTheWeek, index, userText);
+      updateTask(userText);
 
       if (keyboardKey == "Enter" && userText) {
         if (!taskHasSibbling(index + 1)) {
@@ -52,7 +48,9 @@ export function Input({ text, index, dayOfTheWeek, setWeekTasks }: InputType) {
     }, 250);
   };
 
-  const handleInputFocus = () => {
+  const handleInputFocus = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+
     insertPlaceholder(DEFAULT_TASK_TEXT);
     setReadOnly(false);
     insertReadOnly(false);
@@ -82,75 +80,68 @@ export function Input({ text, index, dayOfTheWeek, setWeekTasks }: InputType) {
   };
 
   const taskHasSibbling = (sibblingIndex: number): boolean => {
-    const dailyTasks = getDailyTasks(dayOfTheWeek);
-    const sibbling = dailyTasks[sibblingIndex];
-
+    const sibbling = getDailyTasks(dayOfTheWeek)[sibblingIndex];
     return sibbling ? true : false;
   };
 
-  const updateTask = (
-    dayOfTheWeek: string,
-    index: number,
-    newValue: string
-  ) => {
-    const weekTasks: string[][] = [...getWeekTasks()];
-
-    weekTasks[getDayOfTheWeek(dayOfTheWeek)][index] = newValue;
-
-    setWeekTasks(weekTasks);
+  const updateTask = (newValue: string) => {
+    setDailyTasks((prevTasks): string[] => {
+      const t = [...prevTasks];
+      t[index] = newValue;
+      return t;
+    });
   };
 
   const addTask = (text?: string) => {
-    const weekTasks: string[][] = [...getWeekTasks()];
     const taskText: string = text || "";
 
-    weekTasks[getDayOfTheWeek(dayOfTheWeek)].push(taskText);
-
-    setWeekTasks(weekTasks);
+    setDailyTasks((prevTasks): string[] => {
+      const t = [...prevTasks];
+      t.push(taskText);
+      return t;
+    });
   };
 
-  const deleteTask = (dayOfTheWeek: string, indexToRemove: number) => {
-    const weekTasks: string[][] = [...getWeekTasks()];
-    const dailyTasksLength: number = getDailyTasks(dayOfTheWeek).length;
+  const deleteTask = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
 
-    if (indexToRemove >= 0 && indexToRemove < dailyTasksLength) {
-      weekTasks[getDayOfTheWeek(dayOfTheWeek)].splice(indexToRemove, 1);
-    }
+    setDailyTasks((prevTasks): string[] => {
+      const t = [...prevTasks];
+      const filteredTasks = t.filter((t) => t !== text);
 
-    if (weekTasks[getDayOfTheWeek(dayOfTheWeek)].length === 0) {
-      addTask(DEFAULT_TASK_TEXT);
-    }
+      if (filteredTasks.length === 0) {
+        filteredTasks.push(DEFAULT_TASK_TEXT);
+      }
 
-    setWeekTasks(weekTasks);
+      return filteredTasks;
+    });
   };
 
   return (
-    <div
-      className={`${
-        readOnly
-          ? "card__input-wrapper--readonly"
-          : "card__input-wrapper--editmode"
-      } card__input-wrapper`}
-      key={index}
-      onMouseOver={handleInputHover}
-      onMouseOut={handleInputUnhover}
-    >
-      <input
-        type="text"
-        className="card__input"
-        placeholder={inputText}
-        defaultValue={text}
-        onKeyDown={handleInputEnter.bind(self, index)}
-        onClick={handleInputFocus}
-        maxLength={40}
-        title={text}
-        ref={inputRef}
-      />
+    <>
       <div
-        className="card__input--delete"
-        onClick={deleteTask.bind(self, dayOfTheWeek, index)}
-        key={`delete-${index}`}
-      />
-    </div>
+        className={`${
+          readOnly
+            ? "card__input-wrapper--readonly"
+            : "card__input-wrapper--editmode"
+        } card__input-wrapper`}
+        onMouseOver={handleInputHover}
+        onMouseOut={handleInputUnhover}
+      >
+        <input
+          type="text"
+          className="card__input"
+          placeholder={text || ""}
+          defaultValue={text}
+          value={text}
+          onKeyDown={handleInputEnter.bind(self, index)}
+          maxLength={40}
+          title={text}
+          ref={inputRef}
+          onClick={handleInputFocus}
+        />
+        <div className="card__input--delete" onClick={deleteTask} />
+      </div>
+    </>
   );
 }
