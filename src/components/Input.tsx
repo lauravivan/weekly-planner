@@ -8,17 +8,17 @@ import {
 } from "react";
 import { DEFAULT_TASK_TEXT, getDailyTasks } from "../util";
 
-type InputType = {
+interface InputType {
   text: string;
   index: number;
   dayOfTheWeek: string;
   setDailyTasks: Dispatch<SetStateAction<string[]>>;
-};
+}
 
 export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
-  const [readOnly, setReadOnly] = useState(true);
+  const [isOnEditMode, setIsOnEditMode] = useState(true);
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
-  const [taskText, setTaskText] = useState(text);
+  const [taskPlaceholder, setTaskPlaceholder] = useState("");
 
   useEffect(() => {
     //to do: fix focus sunday on mount
@@ -27,59 +27,40 @@ export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
     }
   }, []);
 
-  useEffect(() => {
-    setTaskText(text);
-  }, [text]);
-
   const handleInputEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const keyboardKey: string = e.key;
 
     if (keyboardKey == "Enter") {
       if (!taskHasSibbling(index + 1)) {
-        addTask();
+        setDailyTasks((prevTasks): string[] => {
+          const t = [...prevTasks];
+          t.push("");
+          return t;
+        });
       }
 
-      setReadOnly(true);
-      insertReadOnly(true);
+      setIsOnEditMode(false);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const userText: string = (e.target as HTMLInputElement).value;
 
-    setTaskText(userText);
-    updateTask(userText);
+    setDailyTasks((prevTasks): string[] => {
+      const t = [...prevTasks];
+      t[index] = userText;
+      return t;
+    });
   };
 
-  const handleInputFocus = (e: React.MouseEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-
-    insertPlaceholder(DEFAULT_TASK_TEXT);
-    setReadOnly(false);
-    insertReadOnly(false);
-  };
-
-  const handleInputHover = () => {
-    insertPlaceholder(DEFAULT_TASK_TEXT);
-    setReadOnly(true);
+  const handleInputFocus = () => {
+    setTaskPlaceholder(DEFAULT_TASK_TEXT);
+    setIsOnEditMode(true);
   };
 
   const handleInputUnhover = () => {
-    insertPlaceholder("");
-    setReadOnly(true);
-    insertReadOnly(true);
-  };
-
-  const insertPlaceholder = (text: string) => {
-    if (inputRef && inputRef.current) {
-      inputRef.current.placeholder = text;
-    }
-  };
-
-  const insertReadOnly = (readOnly: boolean) => {
-    if (inputRef && inputRef.current) {
-      inputRef.current.readOnly = readOnly;
-    }
+    setTaskPlaceholder("");
+    setIsOnEditMode(false);
   };
 
   const taskHasSibbling = (sibblingIndex: number): boolean => {
@@ -92,30 +73,10 @@ export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
     return false;
   };
 
-  const updateTask = (newValue: string) => {
+  const deleteTask = () => {
     setDailyTasks((prevTasks): string[] => {
       const t = [...prevTasks];
-      t[index] = newValue;
-      return t;
-    });
-  };
-
-  const addTask = (text?: string) => {
-    const taskText: string = text || "";
-
-    setDailyTasks((prevTasks): string[] => {
-      const t = [...prevTasks];
-      t.push(taskText);
-      return t;
-    });
-  };
-
-  const deleteTask = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-
-    setDailyTasks((prevTasks): string[] => {
-      const t = [...prevTasks];
-      const filteredTasks = t.filter((t) => t !== text);
+      const filteredTasks = t.filter((t, i) => i !== index);
 
       if (filteredTasks.length === 0) {
         filteredTasks.push(DEFAULT_TASK_TEXT);
@@ -129,24 +90,25 @@ export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
     <>
       <div
         className={`${
-          readOnly
-            ? "card__input-wrapper--readonly"
-            : "card__input-wrapper--editmode"
+          isOnEditMode
+            ? "card__input-wrapper--editmode"
+            : "card__input-wrapper--readonly"
         } card__input-wrapper`}
-        onMouseOver={handleInputHover}
+        onMouseOver={() => setTaskPlaceholder(DEFAULT_TASK_TEXT)}
         onMouseOut={handleInputUnhover}
       >
         <input
           type="text"
           className="card__input"
-          placeholder={taskText || ""}
-          value={taskText}
+          placeholder={taskPlaceholder}
+          value={text}
           onChange={handleInputChange}
           onKeyDown={handleInputEnter}
           maxLength={40}
-          title={taskText}
+          title={text}
           ref={inputRef}
           onClick={handleInputFocus}
+          readOnly={!isOnEditMode}
         />
         <div className="card__input--delete" onClick={deleteTask} />
       </div>
