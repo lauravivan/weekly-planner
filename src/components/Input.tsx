@@ -76,7 +76,7 @@ export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
   const deleteTask = () => {
     setDailyTasks((prevTasks): string[] => {
       const t = [...prevTasks];
-      const filteredTasks = t.filter((t, i) => i !== index);
+      const filteredTasks = t.filter((_, i) => i !== index);
 
       if (filteredTasks.length === 0) {
         filteredTasks.push(DEFAULT_TASK_TEXT);
