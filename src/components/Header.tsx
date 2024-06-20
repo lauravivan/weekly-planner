@@ -1,7 +1,7 @@
-type HeaderProps = {
+interface HeaderProps {
   title: string;
   subtitle: string;
-};
+}
 
 export function Header({ title, subtitle }: HeaderProps) {
   return (

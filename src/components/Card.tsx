@@ -2,9 +2,9 @@ import { Input } from "./index";
 import { getDailyTasks, getDayOfTheWeek, getWeekTasks } from "../util";
 import { useState, useEffect } from "react";
 
-type CardProps = {
+interface CardProps {
   dayOfTheWeek: string;
-};
+}
 
 export function Card({ dayOfTheWeek }: CardProps) {
   const [dailyTasks, setDailyTasks] = useState(getDailyTasks(dayOfTheWeek));
