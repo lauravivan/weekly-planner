@@ -17,6 +17,8 @@ As I needed a fast way to plan things to do during the week, without being tied 
 ## FUTURE FEATURES
 
 - Spread daily repetitive tasks
+- Drag tasks (switching places)
+- Check task (start unchecked every week)
 
 ## PROJECT SETUP
 
