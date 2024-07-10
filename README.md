@@ -4,7 +4,7 @@ A place to organize the week routine with no calendar days attachment.
 
 👽 You can preview it below: 👽
 
-![image](https://github.com/lauravivan/weekly-planner/assets/64754203/7ff57906-08dc-4754-817d-cd270da988df)
+![image](https://github.com/lauravivan/weekly-planner/assets/64754203/34136b56-298a-4f10-9112-e637bc0337b7)
 
 ## TOOLS
 
