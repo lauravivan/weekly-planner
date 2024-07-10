@@ -80,6 +80,10 @@ body {
   flex: 1;
   text-overflow: ellipsis;
 }
+.card__input--checkbox:checked + label input {
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
+}
 
 .cards {
   width: 100%;
