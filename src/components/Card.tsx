@@ -1,4 +1,4 @@
-import { Input } from "./index";
+import { Task } from "./index";
 import { getDailyTasks, getDayOfTheWeek, getWeekTasks } from "../util";
 import { useState, useEffect } from "react";
 
@@ -21,9 +21,10 @@ export function Card({ dayOfTheWeek }: CardProps) {
       <div className="card__header">{dayOfTheWeek}</div>
       <div className="card__content">
         <form className="card__form" onSubmit={(e) => e.preventDefault()}>
-          {dailyTasks.map((text: string, index: number) => (
-            <Input
-              text={text}
+          {dailyTasks.map((task: TaskType, index: number) => (
+            <Task
+              text={task.taskName}
+              isChecked={task.isChecked}
               index={index}
               dayOfTheWeek={dayOfTheWeek}
               setDailyTasks={setDailyTasks}
