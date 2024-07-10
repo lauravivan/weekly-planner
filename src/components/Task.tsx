@@ -10,15 +10,23 @@ import { DEFAULT_TASK_TEXT, getDailyTasks } from "../util";
 
 interface InputType {
   text: string;
+  isChecked: boolean;
   index: number;
   dayOfTheWeek: string;
-  setDailyTasks: Dispatch<SetStateAction<string[]>>;
+  setDailyTasks: Dispatch<SetStateAction<TaskType[]>>;
 }
 
-export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
+export function Task({
+  text,
+  isChecked,
+  index,
+  dayOfTheWeek,
+  setDailyTasks,
+}: InputType) {
   const [isOnEditMode, setIsOnEditMode] = useState(true);
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
   const [taskPlaceholder, setTaskPlaceholder] = useState("");
+  const [check, setCheck] = useState(isChecked);
 
   useEffect(() => {
     //to do: fix focus sunday on mount
@@ -27,14 +35,25 @@ export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
     }
   }, []);
 
+  useEffect(() => {
+    setDailyTasks((prevTasks): TaskType[] => {
+      const t = [...prevTasks];
+      t[index].isChecked = check;
+      return t;
+    });
+  }, [index, setDailyTasks, check]);
+
   const handleInputEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const keyboardKey: string = e.key;
 
     if (keyboardKey == "Enter") {
       if (!taskHasSibbling(index + 1)) {
-        setDailyTasks((prevTasks): string[] => {
+        setDailyTasks((prevTasks): TaskType[] => {
           const t = [...prevTasks];
-          t.push("");
+          t.push({
+            taskName: "",
+            isChecked: false,
+          });
           return t;
         });
       }
@@ -46,11 +65,15 @@ export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const userText: string = (e.target as HTMLInputElement).value;
 
-    setDailyTasks((prevTasks): string[] => {
+    setDailyTasks((prevTasks): TaskType[] => {
       const t = [...prevTasks];
-      t[index] = userText;
+      t[index].taskName = userText;
       return t;
     });
+  };
+
+  const handleCheckboxChange = () => {
+    setCheck((prevCheck) => !prevCheck);
   };
 
   const handleInputFocus = () => {
@@ -74,12 +97,15 @@ export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
   };
 
   const deleteTask = () => {
-    setDailyTasks((prevTasks): string[] => {
+    setDailyTasks((prevTasks): TaskType[] => {
       const t = [...prevTasks];
       const filteredTasks = t.filter((_, i) => i !== index);
 
       if (filteredTasks.length === 0) {
-        filteredTasks.push(DEFAULT_TASK_TEXT);
+        filteredTasks.push({
+          taskName: DEFAULT_TASK_TEXT,
+          isChecked: false,
+        });
       }
 
       return filteredTasks;
@@ -97,19 +123,30 @@ export function Input({ text, index, dayOfTheWeek, setDailyTasks }: InputType) {
         onMouseOver={() => setTaskPlaceholder(DEFAULT_TASK_TEXT)}
         onMouseOut={handleInputUnhover}
       >
-        <input
-          type="text"
-          className="card__input"
-          placeholder={taskPlaceholder}
-          value={text}
-          onChange={handleInputChange}
-          onKeyDown={handleInputEnter}
-          maxLength={40}
-          title={text}
-          ref={inputRef}
-          onClick={handleInputFocus}
-          readOnly={!isOnEditMode}
-        />
+        <div className="card__input">
+          <input
+            className="card__input--checkbox"
+            type="checkbox"
+            id={`checkbox-${index}`}
+            checked={check}
+            onChange={handleCheckboxChange}
+          />
+          <label htmlFor={`checkbox-${index}`}>
+            <input
+              type="text"
+              className="card__input--text"
+              placeholder={taskPlaceholder}
+              value={text}
+              onChange={handleInputChange}
+              onKeyDown={handleInputEnter}
+              maxLength={40}
+              title={text}
+              ref={inputRef}
+              onClick={handleInputFocus}
+              readOnly={!isOnEditMode}
+            />
+          </label>
+        </div>
         <div className="card__input--delete" onClick={deleteTask} />
       </div>
     </>
